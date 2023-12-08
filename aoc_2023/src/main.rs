@@ -29,6 +29,7 @@ fn main() {
         solutions::day5::day5::solution,
         solutions::day6::day6::solution,
         solutions::day7::day7::solution,
+        solutions::day8::day8::solution,
     ];
     
     let args: Vec<String> = env::args().collect();
