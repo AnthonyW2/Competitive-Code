@@ -1,5 +1,5 @@
 [package]
-name = "rust_solutions_from_day_12"
+name = "rust_solutions"
 version = "0.1.0"
 edition = "2021"
 
