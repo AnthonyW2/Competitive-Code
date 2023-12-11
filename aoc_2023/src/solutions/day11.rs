@@ -6,28 +6,12 @@ pub mod day11 {
         
         // ==== Part 1 ==== //
         
-        let mut space = lines.iter().map(|s| s.chars().collect::<Vec<_>>()).collect::<Vec<_>>();
+        let space = lines.iter().map(|s| s.chars().collect::<Vec<_>>()).collect::<Vec<_>>();
         
-        // Collect coordinates of all galaxies
-        let mut galaxies_pre_expantion = Vec::new();
-        for row in space.iter().enumerate() {
-            for col in row.1.iter().enumerate() {
-                if *col.1 == '#' {
-                    galaxies_pre_expantion.push((row.0, col.0));
-                }
-            }
-        }
+        let mut blank_rows = Vec::new();
+        let mut blank_cols = Vec::new();
         
-        // Quadratic loop through all galaxies, adding coordinate-differences to accumulator 1
-        let mut pre_expantion_result = 0;
-        for g1 in 0..galaxies_pre_expantion.len() {
-            for g2 in (g1+1)..galaxies_pre_expantion.len() {
-                pre_expantion_result += (galaxies_pre_expantion[g1].0 as i32 - galaxies_pre_expantion[g2].0 as i32).abs();
-                pre_expantion_result += (galaxies_pre_expantion[g1].1 as i32 - galaxies_pre_expantion[g2].1 as i32).abs();
-            }
-        }
-        
-        // Find & expand all empty lines
+        // Find all empty lines
         let mut row = 0;
         while row < space.len() {
             let mut blank_row = true;
@@ -38,9 +22,7 @@ pub mod day11 {
                 }
             }
             if blank_row {
-                //println!("Cloning {:?}", space[row]);
-                space.insert(row, space[row].clone());
-                row += 1;
+                blank_rows.push(row);
             }
             row += 1;
         }
@@ -55,15 +37,12 @@ pub mod day11 {
                 }
             }
             if blank_col {
-                for row in &mut space {
-                    row.insert(col, '.');
-                }
-                col += 1;
+                blank_cols.push(col);
             }
             col += 1;
         }
         
-        // Collect coordinates of all galaxies
+        // Collect coordinates of all galaxies (row, col)
         let mut galaxies = Vec::new();
         for row in space.iter().enumerate() {
             for col in row.1.iter().enumerate() {
@@ -73,21 +52,38 @@ pub mod day11 {
             }
         }
         
-        // Quadratic loop through all galaxies, adding coordinate-differences to accumulator 1
-        let mut post_expantion_result = 0;
-        for g1 in 0..galaxies.len() {
-            for g2 in (g1+1)..galaxies.len() {
-                post_expantion_result += (galaxies[g1].0 as i32 - galaxies[g2].0 as i32).abs();
-                post_expantion_result += (galaxies[g1].1 as i32 - galaxies[g2].1 as i32).abs();
+        // Iterate through each pair of galaxies, adding up all coordinate differences & accounting for expansion
+        fn sum_of_distances(galaxies: &Vec<(usize, usize)>, expansion_rows: &Vec<usize>, expansion_cols: &Vec<usize>, expansion_magnitude: u64) -> u64 {
+            let mut result = 0;
+            for g1 in 0..galaxies.len() {
+                for g2 in (g1+1)..galaxies.len() {
+                    let lower_row = galaxies[g1].0.min(galaxies[g2].0);
+                    let upper_row = galaxies[g1].0.max(galaxies[g2].0);
+                    for row in expansion_rows {
+                        if *row >= lower_row && *row <= upper_row {
+                            result += expansion_magnitude;
+                        }
+                    }
+                    let lower_col = galaxies[g1].1.min(galaxies[g2].1);
+                    let upper_col = galaxies[g1].1.max(galaxies[g2].1);
+                    for col in expansion_cols {
+                        if *col >= lower_col && *col <= upper_col {
+                            result += expansion_magnitude;
+                        }
+                    }
+                    result += (upper_row - lower_row) as u64;
+                    result += (upper_col - lower_col) as u64;
+                }
             }
+            return result;
         }
         
-        println!("Part 1: {}", post_expantion_result);
+        println!("Part 1: {}", sum_of_distances(&galaxies, &blank_rows, &blank_cols, 1));
         
         
         // ==== Part 2 ==== //
         
-        println!("Part 2: {}", (post_expantion_result-pre_expantion_result)*100);
+        println!("Part 2: {}", sum_of_distances(&galaxies, &blank_rows, &blank_cols, 999999));
         
     }
     
