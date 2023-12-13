@@ -82,6 +82,9 @@ pub mod day12 {
         let mut arrangements2 = 0;
         
         for line in &lines {
+            // Reset the result cache
+            result_cache = HashMap::new();
+            
             //println!("{}", line);
             let mut split = line.split(' ');
             
