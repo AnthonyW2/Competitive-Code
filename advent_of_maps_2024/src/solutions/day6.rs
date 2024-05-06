@@ -2,42 +2,38 @@ pub mod day6 {
     
     pub fn solution(lines: Vec<String>) {
         
-        // ==== Part 1 ==== //
-        
-        let arr = lines[0].split_ascii_whitespace().map(|s| s.parse::<u32>().unwrap()).collect::<Vec<_>>();
+        let arr = lines[0].split_ascii_whitespace().map(|s| s.parse::<i32>().unwrap()).collect::<Vec<_>>();
         
         let n1 = arr[0];
         let n2 = arr[1];
         
-        let mut high_diffs = 0;
+        let mut high_diff_count = 0;
         
         for n in n1..=n2 {
             
             let mut num = n;
             
             while num > 9 {
-                let str = format!("{}", num).chars().collect::<Vec<_>>();
-            
-                let mut new_str = String::new();
+                let digits = format!("{}", num).chars().map(|c| c.to_digit(10).unwrap() as i32).collect::<Vec<_>>();
                 
-                for i in 0..(str.len()-1) {
-                    let a = format!("{}", str[i]).parse::<i32>().unwrap();
-                    let b = format!("{}", str[i+1]).parse::<i32>().unwrap();
+                num = 0;
+                
+                for i in 0..(digits.len()-1) {
+                    let a = digits[i];
+                    let b = digits[i+1];
                     
-                    new_str.push_str(&format!("{}", (b-a).abs()));
+                    num += (b-a).abs() * 10i32.pow((digits.len()-i-2) as u32);
                 }
-                
-                num = new_str.parse::<u32>().unwrap();
                 
             }
             
             if num == 0{
-                high_diffs += 1;
+                high_diff_count += 1;
             }
             
         }
         
-        println!("Part 1: {}", high_diffs);
+        println!("Part 1: {}", high_diff_count);
         
     }
     
