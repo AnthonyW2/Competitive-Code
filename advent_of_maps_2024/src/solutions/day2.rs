@@ -2,7 +2,7 @@ pub mod day2 {
     
     pub fn solution(lines: Vec<String>) {
         
-        // ==== Part 1 ==== //
+        // Money Numbers
         
         let n = lines[0].parse::<u32>().unwrap();
         
@@ -33,7 +33,7 @@ pub mod day2 {
             return sum;
         }
         
-        println!("Part 1: {}", res);
+        println!("Money Numbers: {}", res);
         
     }
     

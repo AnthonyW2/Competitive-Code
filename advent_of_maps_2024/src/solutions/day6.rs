@@ -2,6 +2,8 @@ pub mod day6 {
     
     pub fn solution(lines: Vec<String>) {
         
+        // Diff
+        
         let arr = lines[0].split_ascii_whitespace().map(|s| s.parse::<i32>().unwrap()).collect::<Vec<_>>();
         
         let n1 = arr[0];
@@ -33,7 +35,7 @@ pub mod day6 {
             
         }
         
-        println!("Part 1: {}", high_diff_count);
+        println!("High diffs: {}", high_diff_count);
         
     }
     

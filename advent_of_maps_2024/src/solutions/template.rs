@@ -4,9 +4,10 @@ pub mod day_ {
         
         // ==== Part 1 ==== //
         
-        let n = lines[0].parse::<u32>().unwrap();
+        let n = lines[0].parse::<u64>().unwrap();
         
-        let arr = lines[1].split_ascii_whitespace().map(|s| s.parse::<u32>().unwrap()).collect::<Vec<_>>();
+        let arr0 = lines[0].split_ascii_whitespace().map(|s| s.parse::<u64>().unwrap()).collect::<Vec<_>>();
+        let arr1 = lines[1].split_ascii_whitespace().map(|s| s.parse::<u64>().unwrap()).collect::<Vec<_>>();
         
         for (li, line) in (&lines).iter().enumerate() {
             

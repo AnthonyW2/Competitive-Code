@@ -2,7 +2,7 @@ pub mod day4 {
     
     pub fn solution(lines: Vec<String>) {
         
-        // ==== Part 1 ==== //
+        // Subarray with matching parity
         
         let arr = lines[1].split_ascii_whitespace().map(|s| s.parse::<u32>().unwrap()).collect::<Vec<_>>();
         
@@ -34,7 +34,7 @@ pub mod day4 {
             }
         }
         
-        println!("Part 1: {}", max_length);
+        println!("Longest subarray: {}", max_length);
         
     }
     

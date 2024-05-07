@@ -2,7 +2,7 @@ pub mod day3 {
     
     pub fn solution(lines: Vec<String>) {
         
-        // ==== Part 1 ==== //
+        // 12321
         
         //let n = lines[0].parse::<u32>().unwrap();
         
@@ -20,7 +20,7 @@ pub mod day3 {
             }
         }
         
-        println!("Part 1: {}", count);
+        println!("Combinations: {}", count);
         
     }
     
