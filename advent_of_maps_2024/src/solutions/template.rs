@@ -2,7 +2,7 @@ pub mod day_ {
     
     pub fn solution(lines: Vec<String>) {
         
-        // ==== Part 1 ==== //
+        // 
         
         let n = lines[0].parse::<u64>().unwrap();
         
@@ -13,7 +13,7 @@ pub mod day_ {
             
         }
         
-        println!("Part 1: {}", "_");
+        println!("Solution: {}", "_");
         
     }
     
