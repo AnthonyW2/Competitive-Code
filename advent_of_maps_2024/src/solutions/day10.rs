@@ -6,8 +6,6 @@ pub mod day10 {
         
         let arr = lines[1].split_ascii_whitespace().map(|s| s.parse::<u64>().unwrap()).collect::<Vec<_>>();
         
-        //println!("{}", arr1.len());
-        
         let mut upsetness = 0;
         
         for i in 0..arr.len() {
@@ -16,8 +14,19 @@ pub mod day10 {
                     upsetness += 1;
                 }
             }
-            //println!("{}", i);
         }
+        
+        //let mut enum_arr = arr.iter().enumerate().collect::<Vec<_>>();
+        //enum_arr.sort_by_cached_key(|(_i,a)| *a);
+        //
+        //for i in 0..enum_arr.len() {
+        //    //if i < enum_arr[i].0 {
+        //    //    upsetness += enum_arr[i].0 - i;
+        //    //}
+        //    if i > enum_arr[i].0 {
+        //        upsetness += i - enum_arr[i].0;
+        //    }
+        //}
         
         println!("Solution: {}", upsetness);
         
