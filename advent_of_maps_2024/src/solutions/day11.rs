@@ -9,7 +9,7 @@ pub mod day11 {
         // The minimum not-trolling number
         let mut min_not_bad = u64::MAX;
         
-        for (li, line) in (&lines).iter().enumerate().skip(1) {
+        for (_li, line) in (&lines).iter().enumerate().skip(1) {
             let arr = line.split_ascii_whitespace().collect::<Vec<_>>();
             let num = arr[0].parse::<u64>().unwrap();
             
