@@ -10,6 +10,7 @@ pub mod day_ {
         let arr1 = lines[1].split_ascii_whitespace().map(|s| s.parse::<u64>().unwrap()).collect::<Vec<_>>();
         
         for (li, line) in (&lines).iter().enumerate() {
+            arr = line.split_ascii_whitespace().map(|s| s.parse::<u64>().unwrap()).collect::<Vec<_>>();
             
         }
         
