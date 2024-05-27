@@ -24,3 +24,4 @@ pub mod day23;
 pub mod day24;
 pub mod day25;
 pub mod day26;
+pub mod day27;
