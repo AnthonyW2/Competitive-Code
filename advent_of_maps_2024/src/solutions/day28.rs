@@ -2,24 +2,30 @@ pub mod day28 {
     
     pub fn solution(lines: Vec<String>) {
         
-        // Maximise cost to mow lawn, given rules
+        // Maximise cost for goat to eat the lawn, given rules
         
-        // Store the cost of each space on the lawn
+        // Store the cost of each patch on the lawn
         let lawn = lines[1].split_ascii_whitespace().map(|s| s.parse::<u64>().unwrap()).collect::<Vec<_>>();
         
-        // Store the ranges between which only one space can be eaten
+        // Store the ranges between which only one patch can be eaten
         let mut ranges = Vec::new();
-        //let mut reversed_ranges = Vec::new();
         
-        // Identify all spaces that are not within a limiting range
+        // Identify all patchs that are not within a limiting range
         let mut not_within_range = vec![true; lawn.len()];
+        
+        // For each index in `lawn`, store the next larger index that is not within the same range(s)
+        let mut next_valid_index_list = Vec::new();
+        
+        // For each index in `lawn`, store the next range that starts at a position greater than the next valid index at that position
+        let mut next_valid_range_list = Vec::new();
         
         for (_li, line) in (&lines).iter().enumerate().skip(2) {
             let arr = line.split_ascii_whitespace().map(|s| s.parse::<u64>().unwrap()).collect::<Vec<_>>();
             
+            // Add the range to the list
             ranges.push(((arr[0]-1) as usize, (arr[1]-1) as usize));
-            //reversed_ranges.push(((arr[1]-1) as usize, (arr[0]-1) as usize));
             
+            // Flag patchs that are within a range
             for i in (arr[0]-1)..=(arr[1]-1) {
                 not_within_range[i as usize] = false;
             }
@@ -27,92 +33,98 @@ pub mod day28 {
         }
         
         ranges.sort_unstable();
-        //reversed_ranges.sort_unstable();
         
-        //println!("{:?}", lawn);
-        //println!("{:?}", ranges);
-        //println!("{:?}", not_within_range);
-        
-        
-        
-        let mut cache: Vec<Vec<Option<u64>>> = vec![vec![None; lawn.len()+1]; ranges.len()];
-        
-        /// Find the maximum cost of only spaces within ranges
-        fn find_max_cost(lawn: &Vec<u64>, ranges: &Vec<(usize, usize)>, range: usize, min_idx: usize, cache: &mut Vec<Vec<Option<u64>>>) -> u64 {
+        for i in 0..lawn.len() {
             
-            //println!("Range: {}", range);
+            // Find next minimum index after i
+            let mut min_idx = i;
+            for r in 0..ranges.len() {
+                if i >= ranges[r].0 && i <= ranges[r].1 && ranges[r].1 > min_idx {
+                    min_idx = ranges[r].1;
+                } else if i <= ranges[r].0 {
+                    break;
+                }
+            }
+            next_valid_index_list.push(min_idx+1);
             
-            if cache[range][min_idx].is_some() {
-                return cache[range][min_idx].unwrap();
+            
+            // Find next range after the minimum index
+            let mut next_range = 0;
+            while next_range < ranges.len() && ranges[next_range].0 <= min_idx+1 {
+                next_range += 1;
+            }
+            next_valid_range_list.push(next_range);
+            
+        }
+        
+        
+        
+        // Indexing format: cache[range idx][abs idx - range lower]
+        let mut cache: Vec<Vec<Option<u64>>> = vec![Vec::new(); ranges.len()];
+        for r in 0..ranges.len() {
+            cache[r] = vec![None; lawn.len() - ranges[r].0 + 1];
+        }
+        
+        /// Find the maximum cost of only patchs within ranges
+        fn find_max_cost(lawn: &Vec<u64>, ranges: &Vec<(usize, usize)>, next_valid_index_list: &Vec<usize>, next_valid_range_list: &Vec<usize>, range: usize, min_idx: usize, cache: &mut Vec<Vec<Option<u64>>>) -> u64 {
+            
+            if min_idx >= lawn.len() {
+                return 0;
             }
             
-            println!("Range {} called", range);
+            // Check cache to see if the answer has already been calculated
+            if cache[range][min_idx.max(ranges[range].0) - ranges[range].0].is_some() {
+                return cache[range][min_idx.max(ranges[range].0) - ranges[range].0].unwrap();
+            }
             
             let mut best_sum = 0;
             
-            let mut best_index = 0;
-            
             // Check what happens if nothing in this range is eaten
             if range+1 < ranges.len() {
-                best_sum = find_max_cost(lawn, ranges, range+1, min_idx, cache);
-                best_index = -1;
+                best_sum = find_max_cost(lawn, ranges, next_valid_index_list, next_valid_range_list, range+1, min_idx, cache);
             }
             
             // Check what happens if each of the positions is eaten
             for i in ranges[range].0.max(min_idx)..=ranges[range].1 {
                 
                 let mut new_sum = lawn[i];
-                let mut next_range = range+1;
                 
-                let mut new_min_idx = 0;
-                for r in 0..ranges.len() {
-                    if i >= ranges[r].0 && i <= ranges[r].1 && ranges[r].1 > new_min_idx {
-                        new_min_idx = ranges[r].1;
-                    }
-                }
+                // Find the next minimum index
+                let new_min_idx = next_valid_index_list[i];
                 
-                while next_range < ranges.len() && (i >= ranges[next_range].0) {
-                    next_range += 1;
-                }
-                
-                //println!("Range {} | Adding index {} | Next range {:?}", range, i, next_range);
+                // Find the next valid range
+                let next_range = next_valid_range_list[i];
                 
                 if next_range < ranges.len() {
-                    if i >= ranges[next_range].0 || min_idx >= ranges[next_range].0 || i < min_idx {
-                        println!("WARNING");
-                    }
-                    new_sum += find_max_cost(lawn, ranges, next_range, new_min_idx+1, cache);
+                    // Recursively call on the next range
+                    new_sum += find_max_cost(lawn, ranges, next_valid_index_list, next_valid_range_list, next_range, new_min_idx, cache);
                 }
                 
                 if new_sum > best_sum {
-                    println!("Range {} | Added index {} | Added range {:?} @ {}", range, i, next_range, new_min_idx+1);
                     best_sum = new_sum;
-                    best_index = i as i32;
                 }
                 
             }
             
-            //println!("Best sum from range {}: {} at index {}, from min_idx {}", range, best_sum, best_index, min_idx);
-            
-            cache[range][min_idx] = Some(best_sum);
+            cache[range][min_idx.max(ranges[range].0) - ranges[range].0] = Some(best_sum);
             
             return best_sum;
             
         }
         
         let mut max_cost = 0;
+        
+        // Add up the costs of the patchs where the rules don't apply
         for i in 0..lawn.len() {
             if not_within_range[i] {
                 max_cost += lawn[i];
-                //println!("Add by default: lawn[{}] = {}", i, lawn[i]);
             }
         }
         
-        max_cost += find_max_cost(&lawn, &ranges, 0, 0, &mut cache);
+        // Find the maximum cost of patchs where the rules do apply
+        max_cost += find_max_cost(&lawn, &ranges, &next_valid_index_list, &next_valid_range_list, 0, 0, &mut cache);
         
         println!("Solution: {}", max_cost);
-        
-        
         
     }
     
