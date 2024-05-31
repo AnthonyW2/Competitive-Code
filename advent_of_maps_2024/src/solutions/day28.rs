@@ -60,9 +60,9 @@ pub mod day28 {
         
         
         // Indexing format: cache[range idx][abs idx - range lower]
-        let mut cache: Vec<Vec<Option<u64>>> = vec![Vec::new(); ranges.len()];
+        let mut cache: Vec<Vec<Option<u64>>> = Vec::new();
         for r in 0..ranges.len() {
-            cache[r] = vec![None; lawn.len() - ranges[r].0 + 1];
+            cache.push(vec![None; lawn.len() - ranges[r].0 + 1]);
         }
         
         /// Find the maximum cost of only patchs within ranges
