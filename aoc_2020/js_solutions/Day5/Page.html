@@ -1,0 +1,126 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 5
+
+Protected by the GNU General Public License V3
+
+5 December 2020
+20-12-5
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 5">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 5</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var positions = document.getElementById("input").value.split("\n");
+        
+        var rvals = [64,32,16,8,4,2,1];
+        var cvals = [4,2,1];
+        
+        var largestID = 0;
+        
+        for(var a = 0;a < positions.length;a ++){
+          var row = 0;
+          var col = 0;
+          
+          for(var b = 0;b < 7;b ++){
+            if(positions[a].charAt(b) != "F"){
+              row += rvals[b];
+            }
+          }
+          
+          for(var b = 0;b < 3;b ++){
+            if(positions[a].charAt(b+7) != "L"){
+              col += cvals[b];
+            }
+          }
+          
+          //console.log(row);
+          //console.log(col);
+          
+          var ID = row * 8 + col;
+          
+          if(ID > largestID){
+            largestID = ID;
+          }
+        }
+        
+        document.getElementById("output").innerHTML = largestID;
+        
+        console.log("ms",performance.now() - t0);
+      }
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var positions = document.getElementById("input").value.split("\n");
+        
+        var rvals = [64,32,16,8,4,2,1];
+        var cvals = [4,2,1];
+        
+        var IDs = [];
+        
+        for(var a = 0;a < positions.length;a ++){
+          var row = 0;
+          var col = 0;
+          
+          for(var b = 0;b < 7;b ++){
+            if(positions[a].charAt(b) != "F"){
+              row += rvals[b];
+            }
+          }
+          
+          for(var b = 0;b < 3;b ++){
+            if(positions[a].charAt(b+7) != "L"){
+              col += cvals[b];
+            }
+          }
+          
+          var ID = row * 8 + col;
+          
+          IDs.push(ID);
+        }
+        
+        IDs.sort(function(a,b){return a-b;});
+        console.log(IDs);
+        
+        var prev = IDs[0];
+        
+        for(var a = 1;a < IDs.length;a ++){
+          if(IDs[a] != prev+1){
+            document.getElementById("output2").innerHTML = IDs[a]-1;
+          }
+          prev = IDs[a];
+        }
+        
+        console.log("ms",performance.now() - t0);
+      }
+    </script>
+  </body>
+</html>

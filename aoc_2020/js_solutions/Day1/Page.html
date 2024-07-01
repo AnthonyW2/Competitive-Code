@@ -1,0 +1,66 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 1
+
+Protected by the GNU General Public License V3
+
+1 December 2020
+20-12-1
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 1">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 1</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var inputNums = document.getElementById("input").value.split("\n");
+        
+        for(var a = 0;a < inputNums.length;a += 1){
+          for(var b = 0;b < inputNums.length;b += 1){
+            if(parseInt(inputNums[a]) + parseInt(inputNums[b]) == 2020){
+              document.getElementById("output").innerHTML = (parseInt(inputNums[a])*parseInt(inputNums[b]));
+              return;
+            }
+          }
+        }
+      }
+      
+      function RunJS2(){
+        var inputNums = document.getElementById("input").value.split("\n");
+        
+        for(var a = 0;a < inputNums.length;a += 1){
+          for(var b = 0;b < inputNums.length;b += 1){
+            for(var c = 0;c < inputNums.length;c += 1){
+              if(parseInt(inputNums[a]) + parseInt(inputNums[b]) + parseInt(inputNums[c]) == 2020){
+                document.getElementById("output2").innerHTML = (parseInt(inputNums[a])*parseInt(inputNums[b])*parseInt(inputNums[c]));
+                return;
+              }
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

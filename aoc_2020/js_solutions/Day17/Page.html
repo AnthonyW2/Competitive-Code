@@ -1,0 +1,411 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 17
+
+Protected by the GNU General Public License V3
+
+17 December 2020
+20-12-17
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 17">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 17</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input" style="width:60rem; height:15rem;"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        var field = [];
+        for(var z = 0;z < 1;z ++){
+          field[z] = [];
+          for(var y = 0;y < lines.length;y ++){
+            field[z][y] = [];
+            for(var x = 0;x < lines[y].length;x ++){
+              field[z][y][x] = lines[y].charAt(x);
+            }
+          }
+        }
+        
+        console.log(field);
+        
+        function expand3DArray(arr){
+          var output = [];
+          
+          for(var z = -1;z < arr.length+1;z ++){
+            output[z+1] = [];
+            for(var y = -1;y < arr[0].length+1;y ++){
+              output[z+1][y+1] = [];
+              for(var x = -1;x < arr[0][0].length+1;x ++){
+                if(z >= 0 && y >= 0 && x >= 0 && z < arr.length && y < arr[0].length && x < arr[0][0].length){
+                  output[z+1][y+1][x+1] = arr[z][y][x];
+                }else{
+                  output[z+1][y+1][x+1] = ".";
+                }
+              }
+            }
+          }
+          
+          return output;
+        }
+        
+        function getNeighbours(arr,x,y,z){
+          //X,Y,Z
+          var offsets = [
+            [-1,-1,-1],
+            [-1,-1,0],
+            [-1,-1,1],
+            [-1,0,-1],
+            [-1,0,0],
+            [-1,0,1],
+            [-1,1,-1],
+            [-1,1,0],
+            [-1,1,1],
+            
+            [0,-1,-1],
+            [0,-1,0],
+            [0,-1,1],
+            [0,0,-1],
+            //[0,0,0],
+            [0,0,1],
+            [0,1,-1],
+            [0,1,0],
+            [0,1,1],
+            
+            [1,-1,-1],
+            [1,-1,0],
+            [1,-1,1],
+            [1,0,-1],
+            [1,0,0],
+            [1,0,1],
+            [1,1,-1],
+            [1,1,0],
+            [1,1,1],
+          ];
+          
+          var neighbours = 0;
+          for(var o = 0;o < offsets.length;o ++){
+            if(
+              x+offsets[o][0] >= 0 &&
+              y+offsets[o][1] >= 0 &&
+              z+offsets[o][2] >= 0 &&
+              x+offsets[o][0] < arr[0][0].length &&
+              y+offsets[o][1] < arr[0].length &&
+              z+offsets[o][2] < arr.length &&
+              arr[z+offsets[o][2]][y+offsets[o][1]][x+offsets[o][0]] == "#"
+            ){
+              neighbours ++;
+            }
+          }
+          return neighbours;
+        }
+        
+        function processField(arr){
+          var output = [];
+          
+          for(var z = 0;z < arr.length;z ++){
+            output[z] = [];
+            for(var y = 0;y < arr[0].length;y ++){
+              output[z][y] = [];
+              for(var x = 0;x < arr[0][0].length;x ++){
+                var neighbours = getNeighbours(arr,x,y,z);
+                //console.log(arr[z][y][x],neighbours,x+","+y+","+z);
+                if(arr[z][y][x] == "."){
+                  if(neighbours == 3){
+                    //console.log("Changed to #");
+                    output[z][y][x] = "#";
+                  }else{
+                    //console.log("Stayed .");
+                    output[z][y][x] = ".";
+                  }
+                }else{
+                  if(neighbours == 2 || neighbours == 3){
+                    //console.log("Stayed #");
+                    output[z][y][x] = "#";
+                  }else{
+                    //console.log("Changed to .");
+                    output[z][y][x] = ".";
+                  }
+                }
+              }
+            }
+          }
+          
+          return output;
+        }
+        
+        console.log(expand3DArray(field));
+        console.log(processField(expand3DArray(field)));
+        
+        var newField = processField(expand3DArray(field));
+        for(var c = 0;c < 5;c ++){
+          newField = processField(expand3DArray(newField));
+        }
+        
+        var activeCount = 0;
+        
+        for(var z = 0;z < newField.length;z ++){
+          for(var y = 0;y < newField[0].length;y ++){
+            for(var x = 0;x < newField[0][0].length;x ++){
+              if(newField[z][y][x] == "#"){
+                activeCount ++;
+              }
+            }
+          }
+        }
+        
+        document.getElementById("output").innerHTML = activeCount;
+        
+        console.log(performance.now() - t0,"ms");
+      }
+      
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        var field = [];
+        for(var w = 0;w < 1;w ++){
+          field[w] = [];
+          for(var z = 0;z < 1;z ++){
+            field[w][z] = [];
+            for(var y = 0;y < lines.length;y ++){
+              field[w][z][y] = [];
+              for(var x = 0;x < lines[y].length;x ++){
+                field[w][z][y][x] = lines[y].charAt(x);
+              }
+            }
+          }
+        }
+        
+        console.log(field);
+        
+        function expand3DArray(arr){
+          var output = [];
+          
+          for(var w = -1;w < arr.length+1;w ++){
+            output[w+1] = [];
+            for(var z = -1;z < arr[0].length+1;z ++){
+              output[w+1][z+1] = [];
+              for(var y = -1;y < arr[0][0].length+1;y ++){
+                output[w+1][z+1][y+1] = [];
+                for(var x = -1;x < arr[0][0][0].length+1;x ++){
+                  if(w >= 0 && z >= 0 && y >= 0 && x >= 0 && w < arr.length && z < arr[0].length && y < arr[0][0].length && x < arr[0][0][0].length){
+                    output[w+1][z+1][y+1][x+1] = arr[w][z][y][x];
+                  }else{
+                    output[w+1][z+1][y+1][x+1] = ".";
+                  }
+                }
+              }
+            }
+          }
+          
+          return output;
+        }
+        
+        function getNeighbours(arr,x,y,z,w){
+          //X,Y,Z,W
+          var offsets = [
+            [-1,-1,-1,-1],
+            [-1,-1,-1,0],
+            [-1,-1,-1,1],
+            [-1,-1,0,-1],
+            [-1,-1,0,0],
+            [-1,-1,0,1],
+            [-1,-1,1,-1],
+            [-1,-1,1,0],
+            [-1,-1,1,1],
+            
+            [-1,0,-1,-1],
+            [-1,0,-1,0],
+            [-1,0,-1,1],
+            [-1,0,0,-1],
+            [-1,0,0,0],
+            [-1,0,0,1],
+            [-1,0,1,-1],
+            [-1,0,1,0],
+            [-1,0,1,1],
+            
+            [-1,1,-1,-1],
+            [-1,1,-1,0],
+            [-1,1,-1,1],
+            [-1,1,0,-1],
+            [-1,1,0,0],
+            [-1,1,0,1],
+            [-1,1,1,-1],
+            [-1,1,1,0],
+            [-1,1,1,1],
+            
+            
+            [0,-1,-1,-1],
+            [0,-1,-1,0],
+            [0,-1,-1,1],
+            [0,-1,0,-1],
+            [0,-1,0,0],
+            [0,-1,0,1],
+            [0,-1,1,-1],
+            [0,-1,1,0],
+            [0,-1,1,1],
+            
+            [0,0,-1,-1],
+            [0,0,-1,0],
+            [0,0,-1,1],
+            [0,0,0,-1],
+            //[0,0,0,0],
+            [0,0,0,1],
+            [0,0,1,-1],
+            [0,0,1,0],
+            [0,0,1,1],
+            
+            [0,1,-1,-1],
+            [0,1,-1,0],
+            [0,1,-1,1],
+            [0,1,0,-1],
+            [0,1,0,0],
+            [0,1,0,1],
+            [0,1,1,-1],
+            [0,1,1,0],
+            [0,1,1,1],
+            
+            
+            [1,-1,-1,-1],
+            [1,-1,-1,0],
+            [1,-1,-1,1],
+            [1,-1,0,-1],
+            [1,-1,0,0],
+            [1,-1,0,1],
+            [1,-1,1,-1],
+            [1,-1,1,0],
+            [1,-1,1,1],
+            
+            [1,0,-1,-1],
+            [1,0,-1,0],
+            [1,0,-1,1],
+            [1,0,0,-1],
+            [1,0,0,0],
+            [1,0,0,1],
+            [1,0,1,-1],
+            [1,0,1,0],
+            [1,0,1,1],
+            
+            [1,1,-1,-1],
+            [1,1,-1,0],
+            [1,1,-1,1],
+            [1,1,0,-1],
+            [1,1,0,0],
+            [1,1,0,1],
+            [1,1,1,-1],
+            [1,1,1,0],
+            [1,1,1,1],
+          ];
+          
+          var neighbours = 0;
+          for(var o = 0;o < offsets.length;o ++){
+            if(
+              x+offsets[o][0] >= 0 &&
+              y+offsets[o][1] >= 0 &&
+              z+offsets[o][2] >= 0 &&
+              w+offsets[o][3] >= 0 &&
+              x+offsets[o][0] < arr[0][0][0].length &&
+              y+offsets[o][1] < arr[0][0].length &&
+              z+offsets[o][2] < arr[0].length &&
+              w+offsets[o][3] < arr.length &&
+              arr[ w+offsets[o][3] ][z+offsets[o][2] ][ y+offsets[o][1] ][ x+offsets[o][0] ] == "#"
+            ){
+              neighbours ++;
+            }
+          }
+          return neighbours;
+        }
+        
+        function processField(arr){
+          var output = [];
+          
+          for(var w = 0;w < arr.length;w ++){
+            output[w] = [];
+            for(var z = 0;z < arr[0].length;z ++){
+              output[w][z] = [];
+              for(var y = 0;y < arr[0][0].length;y ++){
+                output[w][z][y] = [];
+                for(var x = 0;x < arr[0][0][0].length;x ++){
+                  var neighbours = getNeighbours(arr,x,y,z,w);
+                  //console.log(arr[w][z][y][x],neighbours,x+","+y+","+z+","+w);
+                  if(arr[w][z][y][x] == "."){
+                    if(neighbours == 3){
+                      //console.log("Changed to #");
+                      output[w][z][y][x] = "#";
+                    }else{
+                      //console.log("Stayed .");
+                      output[w][z][y][x] = ".";
+                    }
+                  }else{
+                    if(neighbours == 2 || neighbours == 3){
+                      //console.log("Stayed #");
+                      output[w][z][y][x] = "#";
+                    }else{
+                      //console.log("Changed to .");
+                      output[w][z][y][x] = ".";
+                    }
+                  }
+                }
+              }
+            }
+          }
+          
+          return output;
+        }
+        
+        console.log(expand3DArray(field));
+        console.log(processField(expand3DArray(field)));
+        
+        var newField = processField(expand3DArray(field));
+        for(var c = 0;c < 5;c ++){
+          newField = processField(expand3DArray(newField));
+        }
+        
+        var activeCount = 0;
+        
+        for(var w = 0;w < newField.length;w ++){
+          for(var z = 0;z < newField[0].length;z ++){
+            for(var y = 0;y < newField[0][0].length;y ++){
+              for(var x = 0;x < newField[0][0][0].length;x ++){
+                if(newField[w][z][y][x] == "#"){
+                  activeCount ++;
+                }
+              }
+            }
+          }
+        }
+        
+        document.getElementById("output2").innerHTML = activeCount;
+        
+        console.log(performance.now() - t0,"ms");
+      }
+    </script>
+  </body>
+</html>

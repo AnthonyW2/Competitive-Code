@@ -1,0 +1,139 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 16
+
+Protected by the GNU General Public License V3
+
+16 December 2020
+20-12-16
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 16">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 16</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input" style="width:60rem; height:15rem;"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var blocks = document.getElementById("input").value.split("\n\n");
+        
+        var rules = blocks[0].split("\n");
+        for(var r = 0;r < rules.length;r ++){
+          var rule = rules[r].split(": ");
+          
+          rules[r] = [rule[0],rule[1].split(" or ")[0].split("-"),rule[1].split(" or ")[1].split("-")];
+        }
+        console.log(rules);
+        
+        var tickets = blocks[2].split("\n");
+        tickets.shift();
+        for(var t = 0;t < tickets.length;t ++){
+          tickets[t] = tickets[t].split(",");
+        }
+        console.log(tickets);
+        
+        function validateNum(num){
+          var valid = false;
+          for(var r = 0;r < rules.length;r ++){
+            if((num >= parseInt(rules[r][1][0]) && num <= parseInt(rules[r][1][1])) || (num >= parseInt(rules[r][2][0]) && num <= parseInt(rules[r][2][1]))){
+              valid = true;
+            }
+          }
+          return valid;
+        }
+        
+        
+        var errorRate = 0;
+        for(var t = 0;t < tickets.length;t ++){
+          for(var n = 0;n < tickets[t].length;n ++){
+            if(!validateNum(parseInt(tickets[t][n]))){
+              errorRate += parseInt(tickets[t][n]);
+            }
+          }
+        }
+        
+        document.getElementById("output").innerHTML = errorRate;
+        
+        console.log(performance.now() - t0,"ms");
+      }
+      
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var blocks = document.getElementById("input").value.split("\n\n");
+        
+        var rules = blocks[0].split("\n");
+        for(var r = 0;r < rules.length;r ++){
+          var rule = rules[r].split(": ");
+          
+          rules[r] = [rule[0],rule[1].split(" or ")[0].split("-"),rule[1].split(" or ")[1].split("-")];
+        }
+        console.log("Tickets:",rules);
+        
+        var tickets = blocks[2].split("\n");
+        tickets.shift();
+        for(var t = 0;t < tickets.length;t ++){
+          tickets[t] = tickets[t].split(",");
+        }
+        console.log("Tickets:",tickets);
+        
+        function validateNum(num){
+          var valid = false;
+          for(var r = 0;r < rules.length;r ++){
+            if((num >= parseInt(rules[r][1][0]) && num <= parseInt(rules[r][1][1])) || (num >= parseInt(rules[r][2][0]) && num <= parseInt(rules[r][2][1]))){
+              valid = true;
+            }
+          }
+          return valid;
+        }
+        
+        
+        var validTickets = [];
+        for(var t = 0;t < tickets.length;t ++){
+          var valid = true;
+          for(var n = 0;n < tickets[t].length;n ++){
+            if(!validateNum(parseInt(tickets[t][n]))){
+              valid = false;
+              n = tickets[t].length;
+            }
+          }
+          if(valid){
+            validTickets.push(tickets[t]);
+          }
+        }
+        
+        console.log("Valid:",validTickets);
+        
+        
+        
+        document.getElementById("output2").innerHTML = "";
+        
+        console.log(performance.now() - t0,"ms");
+      }
+    </script>
+  </body>
+</html>

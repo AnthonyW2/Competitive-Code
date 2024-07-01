@@ -1,0 +1,77 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 19
+
+Protected by the GNU General Public License V3
+
+19 December 2020
+20-12-19
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 19">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 19</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input" style="width:60rem; height:15rem;"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var blocks = document.getElementById("input").value.split("\n\n");
+        
+        var rules = [];
+        
+        var lines = blocks[0].split("\n");
+        for(var l = 0;l < lines.length;l ++){
+          var rule = lines[l].split(": ");
+          rules[parseInt(rule[0])] = rule[1].split(" ");
+          for(var r = 0;r < rules[parseInt(rule[0])].length;r ++){
+            
+          }
+        }
+        
+        console.log(rules);
+        
+        
+        
+        document.getElementById("output").innerHTML = blocks;
+        
+        console.log(performance.now() - t0,"ms");
+      }
+      
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        
+        
+        document.getElementById("output2").innerHTML = numbers[lastNumIndex];
+        
+        console.log(performance.now() - t0,"ms");
+      }
+    </script>
+  </body>
+</html>

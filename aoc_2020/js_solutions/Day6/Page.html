@@ -1,0 +1,119 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 6
+
+Protected by the GNU General Public License V3
+
+6 December 2020
+20-12-6
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 6">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 6</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var groups = document.getElementById("input").value.split("\n\n");
+        
+        function checkForDups(chr,arr){
+          for(var a = 0;a < arr.length;a ++){
+            if(arr[a] == chr){
+              return true;
+            }
+          }
+          return false;
+        }
+        
+        var totalQs = 0;
+        
+        for(var a = 0;a < groups.length;a ++){
+          var people = groups[a].split("\n");
+          
+          var questions = [];
+          
+          for(var b = 0;b < people.length;b ++){
+            for(var c = 0;c < people[b].length;c ++){
+              if(!checkForDups(people[b].charAt(c),questions)){
+                questions.push(people[b].charAt(c));
+              }
+            }
+          }
+          
+          totalQs += questions.length;
+        }
+        
+        document.getElementById("output").innerHTML = totalQs;
+        
+        console.log("ms",performance.now() - t0);
+      }
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var groups = document.getElementById("input").value.split("\n\n");
+        
+        function checkForDups(chr,arr){
+          for(var a = 0;a < arr.length;a ++){
+            if(arr[a] == chr){
+              return true;
+            }
+          }
+          return false;
+        }
+        
+        var letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
+        
+        var totalQs = 0;
+        
+        for(var a = 0;a < groups.length;a ++){
+          var people = groups[a].split("\n");
+          
+          var questions = letters.slice();
+          
+          for(var b = 0;b < questions.length;b ++){
+            for(var c = 0;c < people.length;c ++){
+              if(!checkForDups(questions[b],people[c].split(""))){
+                questions[b] = "";
+              }
+            }
+          }
+          
+          for(var b = 0;b < questions.length;b ++){
+            if(questions[b] != ""){
+              totalQs ++;
+            }
+          }
+        }
+        
+        document.getElementById("output2").innerHTML = totalQs;
+        
+        console.log("ms",performance.now() - t0);
+      }
+    </script>
+  </body>
+</html>

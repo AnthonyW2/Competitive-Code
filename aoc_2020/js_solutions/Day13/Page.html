@@ -1,0 +1,128 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 13
+
+Protected by the GNU General Public License V3
+
+13 December 2020
+20-12-13
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 13">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 13</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input" style="width:60rem; height:15rem;"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        var earliest = parseInt(lines[0]);
+        var buses = lines[1].split(",");
+        
+        for(var a = 0;a < buses.length;a ++){
+          if(buses[a] == "x"){
+            buses.splice(a,1);
+            a --;
+          }
+        }
+        console.log(buses);
+        
+        var closest = earliest;
+        var closestBusID = 0;
+        for(var a = 0;a < buses.length;a ++){
+          var t = 0;
+          while(t < earliest){
+            t += parseInt(buses[a]);
+          }
+          if(t-earliest < closest){
+            closest = t-earliest;
+            closestBusID = buses[a];
+          }
+        }
+        
+        document.getElementById("output").innerHTML = closest*closestBusID;
+        
+        console.log("ms",performance.now() - t0);
+      }
+      
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        var buses = lines[1].split(",");
+        
+        for(var a = 0;a < buses.length;a ++){
+          if(buses[a] != "x"){
+            buses[a] = parseInt(buses[a]);
+          }
+        }
+        console.log("All buses:",buses);
+        
+        
+        
+        var remaining = [];
+        var remPosKey = [];
+        for(var a = 1;a < buses.length;a ++){
+          if(buses[a] != "x"){
+            remaining.push(buses[a]);
+            remPosKey.push(a);
+          }
+        }
+        
+        console.log("Remaining:",remaining);
+        console.log("RemPosKey:",remPosKey);
+        
+        var step = buses[0];
+        var currNum = 0;
+        console.log("Step:",step);
+        console.log("Currnum:",currNum);
+        
+        while(remaining.length > 0){
+          currNum += step;
+          
+          for(var a = 0;a < remaining.length;a ++){
+            if(remaining[a] != "x"){
+              if((currNum+remPosKey[a])%remaining[a] == 0){
+                console.log((currNum+remPosKey[a]),"divisible by",remaining[a]);
+                step *= remaining[a];
+                remaining.splice(a,1);
+                remPosKey.splice(a,1);
+                a --;
+              }
+            }
+          }
+        }
+        
+        document.getElementById("output2").innerHTML = currNum;
+        
+        console.log("ms",performance.now() - t0);
+      }
+    </script>
+  </body>
+</html>

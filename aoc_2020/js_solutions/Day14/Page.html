@@ -1,0 +1,264 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 14
+
+Protected by the GNU General Public License V3
+
+14 December 2020
+20-12-14
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 14">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 14</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input" style="width:60rem; height:15rem;"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        //Split each line into an easily-processible instruction
+        var instructions = [];
+        for(var a = 0;a < lines.length;a ++){
+          var linePieces = lines[a].split(" = ");
+          if(linePieces[0] == "mask"){
+            instructions.push(["mask",linePieces[1]]);
+          }else{
+            instructions.push([parseInt(linePieces[0].substring(4,linePieces[0].length-1)),parseInt(linePieces[1])]);
+          }
+        }
+        
+        var currMask = [];
+        
+        var memAddresses = [];
+        
+        //Process a decimal value through the current bitmask and output the result
+        function processStore(val){
+          var output = [];
+          //Expand the decimal value into a binary string and add preceding zeros
+          var expandedValue = "";
+          for(var a = 0;a < 36-val.toString(2).length;a ++){
+            expandedValue += "0";
+          }
+          expandedValue += val.toString(2);
+          //console.log("Expanded:",expandedValue);
+          
+          for(var a = 35;a >= 0;a --){
+            if(currMask[a] == "X"){
+              output[a] = expandedValue.charAt(a);
+            }else{
+              output[a] = currMask[a];
+            }
+          }
+          return output;
+        }
+        
+        console.log("Instructions:",instructions);
+        
+        //Loop through all the instructions and process what they're meant to do
+        for(var i = 0;i < instructions.length;i ++){
+          if(instructions[i][0] == "mask"){
+            //console.log("Changing bitmask to:",instructions[i][1]);
+            currMask = instructions[i][1].split("");
+          }else{
+            //console.log("Storing:",instructions[i][1],"to:",instructions[i][0]);
+            memAddresses[instructions[i][0]] = processStore(instructions[i][1]);
+          }
+        }
+        
+        console.log("Resulting addresses:",memAddresses);
+        
+        var result = 0;
+        
+        //Add up all resulting values stored in the memory adresses
+        for(var a = 0;a < memAddresses.length;a ++){
+          if(memAddresses[a] != undefined){
+            result += parseInt(memAddresses[a].join(""),2);
+          }
+        }
+        
+        document.getElementById("output").innerHTML = result;
+        
+        console.log(performance.now() - t0,"ms");
+      }
+      
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        //Split each line into an easily-processible instruction
+        var instructions = [];
+        for(var a = 0;a < lines.length;a ++){
+          var linePieces = lines[a].split(" = ");
+          if(linePieces[0] == "mask"){
+            instructions.push(["mask",linePieces[1]]);
+          }else{
+            instructions.push([parseInt(linePieces[0].substring(4,linePieces[0].length-1)),parseInt(linePieces[1])]);
+          }
+        }
+        
+        var currMask = [];
+        
+        var memAddresses = [];
+        
+        function findBinaryCombos(amount = 0){
+          var allCombos = [];
+          
+          function findCombosRecursive(currentArr){
+            if(currentArr.length >= amount){
+              allCombos.push(currentArr);
+              return;
+            }
+            for(var a = 0;a < 2;a ++){
+              var nextArr = currentArr.slice();
+              nextArr.push(a);
+              
+              findCombosRecursive(nextArr);
+            }
+            return;
+          }
+          
+          findCombosRecursive([]);
+          
+          return allCombos;
+        }
+        
+        //console.log("Test:",findBinaryCombos(3));
+        
+        //Process a decimal value through the current bitmask and output the result
+        function processStore(val){
+          var output = [];
+          //Expand the decimal value into a binary string and add preceding zeros
+          var expandedValue = "";
+          for(var a = 0;a < 36-val.toString(2).length;a ++){
+            expandedValue += "0";
+          }
+          expandedValue += val.toString(2);
+          console.log("Expanded:",expandedValue);
+          
+          for(var a = 35;a >= 0;a --){
+            if(currMask[a] == "X"){
+              output[a] = expandedValue.charAt(a);
+            }else{
+              output[a] = currMask[a];
+            }
+          }
+          return output;
+        }
+        
+        console.log("Instructions:",instructions);
+        
+        var definedAddresses = [];
+        
+        //Loop through all the instructions and process what they're meant to do
+        for(var i = 0;i < instructions.length;i ++){
+          if(instructions[i][0] == "mask"){
+            console.log("Changing bitmask to:",instructions[i][1]);
+            currMask = instructions[i][1].split("");
+          }else{
+            console.log("Storing:",instructions[i][1],"to:",instructions[i][0]);
+            
+            var amt = 0;
+            for(var a = 0;a < currMask.length;a ++){
+              if(currMask[a] == "X"){
+                amt ++;
+              }
+            }
+            
+            var binCombos = findBinaryCombos(amt);
+            
+            for(var c = 0;c < binCombos.length;c ++){
+              var memAddr = [];
+              
+              //Expand the decimal value into a binary string and add preceding zeros
+              var expandedValue = "";
+              for(var b = 0;b < 36-instructions[i][0].toString(2).length;b ++){
+                expandedValue += "0";
+              }
+              expandedValue += instructions[i][0].toString(2);
+              //console.log("Expanded:",expandedValue);
+              
+              var digit = 0;
+              for(var b = 0;b < currMask.length;b ++){
+                if(currMask[b] == "X"){
+                  memAddr.push(binCombos[c][digit]);
+                  digit ++;
+                }else if(currMask[b] == "1"){
+                  memAddr.push("1");
+                }else{
+                  memAddr.push(expandedValue.charAt(b));
+                }
+              }
+              
+              //console.log("Mem addr:",memAddr);
+              //console.log("Memory address:",parseInt(memAddr.join(""),2));
+              
+              memAddresses[parseInt(memAddr.join(""),2)] = instructions[i][1];
+              definedAddresses.push(parseInt(memAddr.join(""),2));
+            }
+          }
+        }
+        
+        console.log("Resulting addresses:",memAddresses);
+        
+        for(var a = 0;a < definedAddresses.length;a ++){
+          var checkingElement = definedAddresses[a];
+          for(var b = a+1;b < definedAddresses.length;b ++){
+            if(definedAddresses[b] == checkingElement){
+              definedAddresses.splice(b,1);
+              b --;
+            }
+          }
+        }
+        
+        console.log("Defined addresses:",definedAddresses);
+        
+        //var result = memAddresses.reduce((a, b) => (isNaN(a)?0:a) + (isNaN(b)?0:b), 0);
+        var result = 0;
+        
+        //Add up all resulting values stored in the memory adresses
+        //for(var a = 0;a < memAddresses.length;a ++){
+        //  if(a % 100000000 == 0){
+        //    console.log(a,result);
+        //  }
+        //  if(memAddresses[a] != undefined){
+        //    result += memAddresses[a];
+        //  }
+        //}
+        
+        for(var a = 0;a < definedAddresses.length;a ++){
+          result += memAddresses[definedAddresses[a]];
+        }
+        
+        document.getElementById("output2").innerHTML = result;
+        
+        console.log(performance.now() - t0,"ms");
+      }
+    </script>
+  </body>
+</html>

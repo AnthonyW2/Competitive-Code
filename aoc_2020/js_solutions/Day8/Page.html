@@ -1,0 +1,189 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 8
+
+Protected by the GNU General Public License V3
+
+8 December 2020
+20-12-8
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 8">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 8</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input" style="width:60rem; height:15rem;"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var allInstructions = document.getElementById("input").value.split("\n");
+        
+        var instructions = [];
+        
+        for(var i = 0;i < allInstructions.length;i ++){
+          instructions.push(allInstructions[i].split(" "));
+        }
+        
+        var accumulator = 0;
+        
+        var instr = 0;
+        
+        var executed = [];
+        
+        function execute(instruction){
+          if(instruction[0] == "acc"){
+            accumulator += parseInt(instruction[1]);
+            instr ++;
+          }else if(instruction[0] == "jmp"){
+            instr += parseInt(instruction[1]);
+          }else if(instruction[0] == "nop"){
+            instr ++;
+          }
+        }
+        
+        while(instr < instructions.length){
+          var oldAcc = accumulator;
+          
+          //console.log("Instruction:",instructions[instr]);
+          
+          execute(instructions[instr]);
+          
+          //console.log("Acc:",accumulator);
+          
+          for(var a = 0;a < executed.length;a ++){
+            if(instr == executed[a]){
+              //console.log("Exited");
+              accumulator = oldAcc;
+              //End the loop
+              instr = instructions.length;
+            }
+          }
+          
+          executed.push(instr);
+        }
+        
+        document.getElementById("output").innerHTML = accumulator;
+        
+        console.log("ms",performance.now() - t0);
+      }
+      
+      
+      
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var allInstructions = document.getElementById("input").value.split("\n");
+        
+        var instructions = [];
+        
+        for(var i = 0;i < allInstructions.length;i ++){
+          instructions.push(allInstructions[i].split(" "));
+        }
+        
+        function modify(inputInstructions,instruction){
+          var output = [];
+          
+          //Prevent the function from referencing the input object in any way
+          for(var a = 0;a < inputInstructions.length;a ++){
+            output.push(inputInstructions[a].slice());
+          }
+          
+          if(output[instruction][0] == "nop"){
+            output[instruction][0] = "jmp";
+          }else if(output[instruction][0] == "jmp"){
+            output[instruction][0] = "nop";
+          }else{
+            return [];
+          }
+          return output;
+        }
+        
+        var foundCorruption = false;
+        
+        var accumulator = 0;
+        
+        var modified = 0;
+        
+        while(!foundCorruption){
+          accumulator = 0;
+          
+          var newInstructions = modify(instructions,modified);
+          
+          function testMod(){
+            if(newInstructions.length == 0){
+              return false;
+            }
+            
+            var instr = 0;
+            
+            var executed = [];
+            
+            function execute(instruction){
+              if(instruction[0] == "acc"){
+                accumulator += parseInt(instruction[1]);
+                instr ++;
+              }else if(instruction[0] == "jmp"){
+                instr += parseInt(instruction[1]);
+              }else if(instruction[0] == "nop"){
+                instr ++;
+              }
+            }
+            
+            while(instr < newInstructions.length){
+              var oldAcc = accumulator;
+              
+              execute(newInstructions[instr]);
+              
+              for(var a = 0;a < executed.length;a ++){
+                if(instr == executed[a]){
+                  return false;
+                }
+              }
+              
+              executed.push(instr);
+            }
+            return true;
+          }
+          
+          if(testMod()){
+            foundCorruption = true;
+          }
+          
+          modified ++;
+          
+          if(modified >= instructions.length){
+            console.log("Failed");
+            return;
+          }
+        }
+        
+        document.getElementById("output2").innerHTML = accumulator;
+        
+        console.log("ms",performance.now() - t0);
+      }
+    </script>
+  </body>
+</html>

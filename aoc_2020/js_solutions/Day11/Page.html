@@ -1,0 +1,244 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 11
+
+Protected by the GNU General Public License V3
+
+11 December 2020
+20-12-11
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 11">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 11</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input" style="width:60rem; height:15rem;"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        var seats = [];
+        for(var l = 0;l < lines.length;l ++){
+          seats.push([]);
+          for(var s = 0;s < lines[l].length;s ++){
+            seats[l].push(lines[l].charAt(s));
+          }
+        }
+        
+        function arrEquals(arr1,arr2){
+          for(var a = 0;a < arr1.length;a ++){
+            for(var b = 0;b < arr1[a].length;b ++){
+              if(arr1[a][b] != arr2[a][b]){
+                return false;
+              }
+            }
+          }
+          return true;
+        }
+        
+        function checkNeighbours(arr,x,y){
+          var offsets = [
+            [0,1],
+            [1,1],
+            [1,0],
+            [1,-1],
+            [0,-1],
+            [-1,-1],
+            [-1,0],
+            [-1,1]
+          ];
+          var neighbours = 0;
+          for(var o = 0;o < offsets.length;o ++){
+            if(x+offsets[o][0] >= 0 && y+offsets[o][1] >= 0 && x+offsets[o][0] < arr[0].length && y+offsets[o][1] < arr.length && arr[y+offsets[o][1]][x+offsets[o][0]] == "#"){
+              neighbours ++;
+            }
+          }
+          return neighbours;
+        }
+        
+        function processSeats(input){
+          var output = JSON.parse(JSON.stringify(input));
+          
+          for(var y = 0;y < input.length;y ++){
+            for(var x = 0;x < input[y].length;x ++){
+              var neighbours = checkNeighbours(input,x,y);
+              //console.log("Neighbours:",neighbours);
+              if(input[y][x] == "L" && neighbours == 0){
+                output[y][x] = "#";
+              }else if(input[y][x] == "#" && neighbours >= 4){
+                output[y][x] = "L";
+              }
+            }
+          }
+          
+          return output;
+        }
+        
+        var prevArr = JSON.parse(JSON.stringify(seats));
+        var currArr = processSeats(seats);
+        
+        while(!arrEquals(prevArr,currArr)){
+          prevArr = JSON.parse(JSON.stringify(currArr));
+          currArr = processSeats(currArr);
+        }
+        
+        console.log("Final array:",currArr);
+        
+        var finalCount = 0;
+        
+        for(var a = 0;a < currArr.length;a ++){
+          for(var b = 0;b < currArr[a].length;b ++){
+            if(currArr[a][b] == "#"){
+              finalCount ++;
+            }
+          }
+        }
+        
+        document.getElementById("output").innerHTML = finalCount;
+        
+        console.log("ms",performance.now() - t0);
+      }
+      
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        //Create a 2 dimensional array of all the seats
+        var seats = [];
+        for(var l = 0;l < lines.length;l ++){
+          seats.push([]);
+          for(var s = 0;s < lines[l].length;s ++){
+            seats[l].push(lines[l].charAt(s));
+          }
+        }
+        
+        
+        //Compare two 2D arrays
+        function arrEquals(arr1,arr2){
+          for(var a = 0;a < arr1.length;a ++){
+            for(var b = 0;b < arr1[a].length;b ++){
+              if(arr1[a][b] != arr2[a][b]){
+                return false;
+              }
+            }
+          }
+          return true;
+        }
+        
+        
+        //Count and return the amount of neighbouring seats which are occupied
+        function checkNeighbours(arr,x,y){
+          var offsets = [
+            [0,1],
+            [1,1],
+            [1,0],
+            [1,-1],
+            [0,-1],
+            [-1,-1],
+            [-1,0],
+            [-1,1]
+          ];
+          
+          //Follow a direction until it hits and returns a seat
+          function checkLine(offset){
+            var pos = [x,y];
+            while(true){
+              pos[0] += offsets[offset][0];
+              pos[1] += offsets[offset][1];
+              if(pos[0] >= 0 && pos[1] >= 0 && pos[0] < arr[0].length && pos[1] < arr.length){
+                if(arr[pos[1]][pos[0]] == "#"){
+                  return "#";
+                }else if(arr[pos[1]][pos[0]] == "L"){
+                  return "L";
+                }
+              }else{
+                return ".";
+              }
+            }
+          }
+          
+          var neighbours = 0;
+          for(var o = 0;o < offsets.length;o ++){
+            if(checkLine(o) == "#"){
+              neighbours ++;
+            }
+          }
+          return neighbours;
+        }
+        
+        
+        //Loop through all the seats and change their state depending on the amount of occupied neighbours
+        function processSeats(input){
+          var output = JSON.parse(JSON.stringify(input));
+          
+          for(var y = 0;y < input.length;y ++){
+            for(var x = 0;x < input[y].length;x ++){
+              var neighbours = checkNeighbours(input,x,y);
+              
+              if(input[y][x] == "L" && neighbours == 0){
+                output[y][x] = "#";
+              }else if(input[y][x] == "#" && neighbours >= 5){
+                output[y][x] = "L";
+              }
+            }
+          }
+          
+          return output;
+        }
+        
+        
+        //Continuously process the array of seats until it stabilises
+        var prevArr = JSON.parse(JSON.stringify(seats));
+        var currArr = processSeats(seats);
+        
+        while(!arrEquals(prevArr,currArr)){
+          prevArr = JSON.parse(JSON.stringify(currArr));
+          currArr = processSeats(currArr);
+        }
+        
+        console.log("Final array:",currArr);
+        
+        
+        //Get the final count of occupied seats
+        var finalCount = 0;
+        
+        for(var a = 0;a < currArr.length;a ++){
+          for(var b = 0;b < currArr[a].length;b ++){
+            if(currArr[a][b] == "#"){
+              finalCount ++;
+            }
+          }
+        }
+        
+        document.getElementById("output2").innerHTML = finalCount;
+        
+        console.log("ms",performance.now() - t0);
+      }
+    </script>
+  </body>
+</html>

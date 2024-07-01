@@ -1,0 +1,137 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 15
+
+Protected by the GNU General Public License V3
+
+15 December 2020
+20-12-15
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 15">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 15</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input" style="width:60rem; height:15rem;"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var numbers = document.getElementById("input").value.split(",");
+        
+        for(var a = 0;a < numbers.length;a ++){
+          numbers[a] = parseInt(numbers[a]);
+        }
+        
+        var limit = 2020-numbers.length;
+        
+        function getNextNumber(){
+          for(var b = numbers.length-2;b >= 0;b --){
+            if(numbers[b] == numbers[numbers.length-1]){
+              return numbers.length-b-1;
+            }
+          }
+          return 0;
+        }
+        
+        for(var a = 0;a < limit;a ++){
+          numbers.push(getNextNumber());
+        }
+        
+        console.log("Final numbers:",numbers);
+        
+        document.getElementById("output").innerHTML = numbers[numbers.length-1];
+        
+        console.log(performance.now() - t0,"ms");
+      }
+      
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var numbers = document.getElementById("input").value.split(",");
+        
+        var latestAppearances = [];
+        
+        for(var a = 0;a < numbers.length;a ++){
+          numbers[a] = parseInt(numbers[a]);
+          latestAppearances.push(a);
+        }
+        
+        var limit = 10;
+        
+        function getNextNumber(){
+          for(var b = numbers.length-2;b >= 0;b --){
+            if(numbers[b] == numbers[numbers.length-1]){
+              return numbers.length-b-1;
+            }
+          }
+          return 0;
+        }
+        
+        var nextNum = 0;
+        for(var n = numbers.length;n < limit;n ++){
+          console.log("Searching for:",nextNum);
+          
+          var index = -1;
+          for(var b = 0;b < numbers.length-1;b ++){
+            if(nextNum == numbers[b]){
+              index = b;
+            }
+          }
+          console.log("N:",n);
+          if(index == -1){
+            console.log("Adding",nextNum,"to the stack");
+            numbers.push(nextNum);
+            latestAppearances.push(n);
+            nextNum = 0;
+            console.log("nextNum:",nextNum);
+          }else{
+            console.log("Index:",index);
+            console.log("Num:",numbers[index]);
+            console.log("Lt ap:",latestAppearances[index]);
+            nextNum = n-latestAppearances[index];
+            latestAppearances[index] = n;
+            console.log("nextNum:",nextNum);
+          }
+        }
+        
+        console.log("Final numbers:",numbers);
+        console.log("Final indexes:",latestAppearances);
+        
+        var lastNumIndex = 0;
+        for(var a = 0;a < numbers.length;a ++){
+          if(latestAppearances[a] > latestAppearances[lastNumIndex]){
+            lastNumIndex = a;
+          }
+        }
+        
+        //document.getElementById("output2").innerHTML = numbers[numbers.length-1];
+        document.getElementById("output2").innerHTML = numbers[lastNumIndex];
+        
+        console.log(performance.now() - t0,"ms");
+      }
+    </script>
+  </body>
+</html>

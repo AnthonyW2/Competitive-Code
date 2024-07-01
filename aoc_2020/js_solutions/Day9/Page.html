@@ -1,0 +1,128 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 9
+
+Protected by the GNU General Public License V3
+
+9 December 2020
+20-12-9
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 9">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 9</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input" style="width:60rem; height:15rem;"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        for(var a = 0;a < lines.length;a ++){
+          lines[a] = parseInt(lines[a]);
+        }
+        
+        function addsUp(n1,n2,sum){
+          if(n1+n2 == sum && n1 != n2){
+            return true;
+          }
+          return false;
+        }
+        
+        function validate(array,n){
+          var output = [];
+          for(var a = n-25;a < n;a ++){
+            if(array[a] <= array[n]){
+              for(var b = n-25;b < n;b ++){
+                if(addsUp(array[a],array[b],array[n])){
+                  output.push([a,b]);
+                }
+              }
+            }
+          }
+          return output;
+        }
+        
+        for(var a = 25;a < lines.length;a ++){
+          var pairs = validate(lines,a);
+          if(pairs.length > 0){
+            //console.log("Number:",lines[a]);
+            //console.log("Sum-pairs:",validate(lines,lines[a]));
+          }else{
+            document.getElementById("output").innerHTML = lines[a];
+            return lines[a];
+          }
+        }
+        
+        console.log("All valid");
+        
+        document.getElementById("output").innerHTML = lines.length;
+        
+        console.log("ms",performance.now() - t0);
+      }
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        for(var a = 0;a < lines.length;a ++){
+          lines[a] = parseInt(lines[a]);
+        }
+        
+        var invalid = RunJS();
+        
+        for(var a = 0;a < lines.length;a ++){
+          var output = 0;
+          var nums = [];
+          var num = a;
+          while(output < invalid && num < lines.length){
+            output += lines[num];
+            nums.push(lines[num]);
+            num ++;
+          }
+          if(output == invalid){
+            //Find the smallest and largest numbers in the contiguous set
+            var smallest = nums[0];
+            var largest = 0;
+            for(var n = 0;n < nums.length;n ++){
+              if(smallest > nums[n]){
+                smallest = nums[n];
+              }
+              if(largest < nums[n]){
+                largest = nums[n];
+              }
+            }
+            document.getElementById("output2").innerHTML = smallest+largest;
+            return;
+          }
+        }
+        
+        document.getElementById("output2").innerHTML = "Failed";
+        
+        console.log("ms",performance.now() - t0);
+      }
+    </script>
+  </body>
+</html>

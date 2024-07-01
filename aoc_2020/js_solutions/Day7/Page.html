@@ -1,0 +1,200 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 7
+
+Protected by the GNU General Public License V3
+
+7 December 2020
+20-12-7
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 7">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 7</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input" style="width:60rem; height:15rem;"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var rules = document.getElementById("input").value.split("\n");
+        
+        var brokenDownRules = [];
+        
+        //Remove unnecessary text from a bag colour string ("2 light red bags." > "2 light red")
+        function simplifyColour(colorString){
+          return colorString.replace(" bags","").replace(" bag","").replace(".","");
+        }
+        
+        //Extract the amount and the colour from a rule ("2 light red" > [2,"light red"])
+        function splitRule(rule){
+          var outputRule = rule.replace(" ","$").split("$");
+          outputRule[0] = parseInt(outputRule[0]);
+          return outputRule;
+        }
+        
+        //Remove duplicates from an array
+        function removeDups(arr){
+          for(var a = 0;a < arr.length;a ++){
+            var data = arr[a];
+            for(var b = a+1;b < arr.length;b ++){
+              if(arr[b] == data){
+                arr.splice(b,1);
+                b --;
+              }
+            }
+          }
+        }
+        
+        for(var r = 0;r < rules.length;r ++){
+          var breakdown1 = rules[r].split(" contain ");
+          if(breakdown1[1] != "no other bags."){
+            var breakdown2 = breakdown1[1].split(", ");
+            brokenDownRules.push([simplifyColour(breakdown1[0])]);
+            for(var a = 0;a < breakdown2.length;a ++){
+              brokenDownRules[brokenDownRules.length-1].push(splitRule(simplifyColour(breakdown2[a])));
+            }
+          }
+        }
+        
+        console.log("Broken down rules:",brokenDownRules);
+        
+        //Recursively find all the outer bags of a given bag colour
+        function findParents(colour){
+          var foundParents = [];
+          for(var r = 0;r < brokenDownRules.length;r ++){
+            for(var a = 1;a < brokenDownRules[r].length;a ++){
+              if(brokenDownRules[r][a][1] == colour){
+                foundParents.push(brokenDownRules[r][0]);
+              }
+            }
+          }
+          if(foundParents.length == 0){
+            return [];
+          }else{
+            var output = foundParents;
+            for(var a = 0;a < foundParents.length;a ++){
+              output = output.concat(findParents(foundParents[a]));
+            }
+            return output;
+          }
+        }
+        
+        var allGoldParents = findParents("shiny gold");
+        
+        removeDups(allGoldParents);
+        
+        console.log("All parents:",allGoldParents);
+        
+        document.getElementById("output").innerHTML = allGoldParents.length;
+        
+        console.log("ms",performance.now() - t0);
+      }
+      
+      
+      
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var rules = document.getElementById("input").value.split("\n");
+        
+        var brokenDownRules = [];
+        
+        //Remove unnecessary text from a bag colour string ("2 light red bags." > "2 light red")
+        function simplifyColour(colorString){
+          return colorString.replace(" bags","").replace(" bag","").replace(".","");
+        }
+        
+        //Extract the amount and the colour from a rule ("2 light red" > [2,"light red"])
+        function splitRule(rule){
+          var outputRule = rule.replace(" ","$").split("$");
+          outputRule[0] = parseInt(outputRule[0]);
+          return outputRule;
+        }
+        
+        //Remove duplicates from an array
+        function removeDups(arr){
+          for(var a = 0;a < arr.length;a ++){
+            var data = arr[a];
+            for(var b = a+1;b < arr.length;b ++){
+              if(arr[b] == data){
+                arr.splice(b,1);
+                b --;
+              }
+            }
+          }
+        }
+        
+        for(var r = 0;r < rules.length;r ++){
+          var breakdown1 = rules[r].split(" contain ");
+          if(breakdown1[1] != "no other bags."){
+            var breakdown2 = breakdown1[1].split(", ");
+            brokenDownRules.push([simplifyColour(breakdown1[0])]);
+            for(var a = 0;a < breakdown2.length;a ++){
+              brokenDownRules[brokenDownRules.length-1].push(splitRule(simplifyColour(breakdown2[a])));
+            }
+          }
+        }
+        
+        //console.log("Broken down rules:",brokenDownRules);
+        
+        function findChildren(colour){
+          var foundChildren = [];
+          var amounts = [];
+          
+          for(var r = 0;r < brokenDownRules.length;r ++){
+            if(brokenDownRules[r][0] == colour){
+              for(var a = 1;a < brokenDownRules[r].length;a ++){
+                foundChildren.push(brokenDownRules[r][a][1]);
+                amounts.push(brokenDownRules[r][a][0]);
+              }
+            }
+          }
+          
+          if(foundChildren.length == 0){
+            return [colour];
+          }else{
+            var output = [colour];
+            for(var a = 0;a < foundChildren.length;a ++){
+              var nextLayer = findChildren(foundChildren[a]);
+              for(var b = 0;b < amounts[a];b ++){
+                output = output.concat(nextLayer);
+              }
+            }
+            return output;
+          }
+        }
+        
+        var allGoldChildren = findChildren("shiny gold");
+        
+        console.log(allGoldChildren);
+        
+        document.getElementById("output2").innerHTML = allGoldChildren.length-1;
+        
+        console.log("ms",performance.now() - t0);
+      }
+    </script>
+  </body>
+</html>

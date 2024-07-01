@@ -1,0 +1,96 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 2
+
+Protected by the GNU General Public License V3
+
+2 December 2020
+20-12-2
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 2">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 2</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var inputNums = document.getElementById("input").value.split("\n");
+        
+        var validPasswords = 0;
+        
+        for(var a = 0;a < inputNums.length;a += 1){
+          var rules = inputNums[a].split(" ");
+          
+          if(rules[0] != "" && rules[0] != undefined){
+            var lowerBound = parseInt(rules[0].split("-")[0]);
+            var upperBound = parseInt(rules[0].split("-")[1]);
+            var letter = rules[1].charAt(0);
+            
+            var letterCount = 0;
+            for(var b = 0;b < rules[2].length;b += 1){
+              if(rules[2].charAt(b) == letter){
+                letterCount ++;
+              }
+            }
+            if(letterCount >= lowerBound && letterCount <= upperBound){
+              validPasswords ++;
+            }
+          }
+        }
+        
+        document.getElementById("output").innerHTML = validPasswords;
+        
+        console.log(performance.now() - t0);
+      }
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        var inputNums = document.getElementById("input").value.split("\n");
+        
+        var validPasswords = 0;
+        
+        for(var a = 0;a < inputNums.length;a += 1){
+          var rules = inputNums[a].split(" ");
+          
+          if(rules[0] != "" && rules[0] != undefined){
+            var pos1 = parseInt(rules[0].split("-")[0])-1;
+            var pos2 = parseInt(rules[0].split("-")[1])-1;
+            var letter = rules[1].charAt(0);
+            
+            var letterCount = 0;
+            if((rules[2].charAt(pos1) == letter) != (rules[2].charAt(pos2) == letter)){
+              validPasswords ++;
+            }
+          }
+        }
+        
+        document.getElementById("output2").innerHTML = validPasswords;
+        
+        console.log(performance.now() - t0);
+      }
+    </script>
+  </body>
+</html>

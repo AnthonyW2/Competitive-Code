@@ -1,0 +1,100 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 3
+
+Protected by the GNU General Public License V3
+
+3 December 2020
+20-12-3
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 3">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 3</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var inputLines = document.getElementById("input").value.split("\n");
+        var inputWidth = inputLines[0].length;
+        
+        // How far the pointer moves horizontally for every line
+        var hmovement = 3;
+        
+        var x = 0;
+        
+        var trees = 0;
+        
+        for(var a = 0;a < inputLines.length;a += 1){
+          
+          if(inputLines[a].charAt(x) == "#"){
+            trees ++;
+          }
+          
+          x = (x+hmovement)%inputWidth;
+        }
+        
+        document.getElementById("output").innerHTML = trees;
+        
+        console.log("ms",performance.now() - t0);
+      }
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var inputLines = document.getElementById("input").value.split("\n");
+        var inputWidth = inputLines[0].length;
+        
+        var hmoves = [1,3,5,7,1];
+        var vmoves = [1,1,1,1,2];
+        
+        var answer = 1;
+        
+        for(var s = 0;s < hmoves.length;s ++){
+          var x = 0;
+          
+          var trees = 0;
+          
+          for(var a = 0;a < inputLines.length;a += vmoves[s]){
+            
+            if(inputLines[a].charAt(x) == "#"){
+              trees ++;
+            }
+            
+            x = (x+hmoves[s])%inputWidth;
+          }
+          
+          console.log(trees);
+          answer *= trees;
+        }
+        
+        document.getElementById("output2").innerHTML = answer;
+        
+        console.log("ms",performance.now() - t0);
+      }
+    </script>
+  </body>
+</html>

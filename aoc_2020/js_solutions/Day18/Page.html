@@ -1,0 +1,242 @@
+<!--
+Anthony Wilson - Advent of Code 2020 - Day 18
+
+Protected by the GNU General Public License V3
+
+18 December 2020
+20-12-18
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Anthony Wilson</title>
+    <!--link rel="stylesheet" type="text/css" href="style.css"-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Anthony Wilson">
+    <meta name="description" content="Advent of Code 2020 Day 18">
+    
+  </head>
+  <body>
+    <h1>Advent of Code 2020 Day 18</h1>
+    <hr>
+    
+    <textarea id="input" placeholder="Code input" style="width:60rem; height:15rem;"></textarea><br>
+    
+    <button onclick="RunJS()">Run Code</button><br>
+    <p id="output">[Code output]</p>
+    
+    <button onclick="RunJS2()">Run Part 2</button><br>
+    <p id="output2">[Code output 2]</p>
+    
+    <script>
+      function RunJS(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        //Recursively calculate an expression without brackets
+        function recursiveCalc(input){
+          input = input.replace("--","");
+          if(input.substr(0,3) == " - "){
+            input = input.replace(" - ","-");
+          }
+          //console.log("Calculating:",input);
+          
+          var eqParts = input.split(" ");
+          
+          if(eqParts.length == 1){
+            return input;
+          }
+          
+          var len = eqParts.length;
+          
+          for(var a = 0;a < eqParts.length;a ++){
+            if(eqParts[a] == "*"){
+              var ans = parseFloat(eqParts[a-1])*parseFloat(eqParts[a+1]);
+              eqParts[a] = ans.toString();
+              eqParts.splice(a+1,1);
+              eqParts.splice(a-1,1);
+              a = len;
+            }else if(eqParts[a] == "/"){
+              var ans = (parseFloat(eqParts[a-1])/parseFloat(eqParts[a+1]));
+              eqParts[a] = ans.toString();
+              eqParts.splice(a+1,1);
+              eqParts.splice(a-1,1);
+              a = len;
+            }else if(eqParts[a] == "+"){
+              var ans = parseFloat(eqParts[a-1])+parseFloat(eqParts[a+1]);
+              eqParts[a] = ans.toString();
+              eqParts.splice(a+1,1);
+              eqParts.splice(a-1,1);
+              a = len;
+            }else if(eqParts[a] == "-"){
+              var ans = parseFloat(eqParts[a-1])-parseFloat(eqParts[a+1]);
+              eqParts[a] = ans.toString();
+              eqParts.splice(a+1,1);
+              eqParts.splice(a-1,1);
+              a = len;
+            }
+          }
+          
+          return recursiveCalc(eqParts.join(" "));
+        }
+        
+        //Recursively evaluate an expression with brackets
+        function evalBrackets(str){
+          //Just return a normal calculation if there are no more brackets to compute
+          if(str.length == str.replace("(","").length){
+            return recursiveCalc(str);
+          }
+          
+          var opening = undefined;
+          var closing = undefined;
+          
+          var level = 0;
+          
+          for(var a = 0;a < str.length;a ++){
+            if(str[a] == "("){
+              if(opening== undefined){
+                opening = a;
+              }
+              level ++;
+            }else if(str[a] == ")"){
+              if(level == 1){
+                closing = a;
+                a = str.length;
+              }
+              level --;
+            }
+          }
+          
+          //Split the string into pieces, according to the positions of the brackets
+          var strParts = [str.substring(0,opening),str.substring(opening+1,closing),str.substring(closing+1)];
+          
+          //Evaluate the found set of brackets, and evaluate the resulting expression
+          return evalBrackets(strParts[0]+evalBrackets(strParts[1])+strParts[2]);
+        }
+        
+        var result = 0;
+        
+        for(var l = 0;l < lines.length;l ++){
+          result += parseInt(evalBrackets(lines[l]));
+        }
+                
+        document.getElementById("output").innerHTML = result;
+        
+        console.log(performance.now() - t0,"ms");
+      }
+      
+      
+      
+      function RunJS2(){
+        var t0 = performance.now();
+        
+        var lines = document.getElementById("input").value.split("\n");
+        
+        //Recursively calculate an expression without brackets
+        function recursiveCalc(input,type){
+          input = input.replace("--","");
+          if(input.substr(0,3) == " - "){
+            input = input.replace(" - ","-");
+          }
+          //console.log("Calculating:",input);
+          
+          var eqParts = input.split(" ");
+          
+          if(eqParts.length == 1){
+            return input;
+          }
+          
+          var len = eqParts.length;
+          
+          for(var a = 0;a < eqParts.length;a ++){
+            if(type == "*"){
+              if(eqParts[a] == "*"){
+                var ans = parseFloat(eqParts[a-1])*parseFloat(eqParts[a+1]);
+                eqParts[a] = ans.toString();
+                eqParts.splice(a+1,1);
+                eqParts.splice(a-1,1);
+                a = len;
+              }else if(eqParts[a] == "/"){
+                var ans = (parseFloat(eqParts[a-1])/parseFloat(eqParts[a+1]));
+                eqParts[a] = ans.toString();
+                eqParts.splice(a+1,1);
+                eqParts.splice(a-1,1);
+                a = len;
+              }
+            }else{
+              if(eqParts[a] == "+"){
+                var ans = parseFloat(eqParts[a-1])+parseFloat(eqParts[a+1]);
+                eqParts[a] = ans.toString();
+                eqParts.splice(a+1,1);
+                eqParts.splice(a-1,1);
+                a = len;
+              }else if(eqParts[a] == "-"){
+                var ans = parseFloat(eqParts[a-1])-parseFloat(eqParts[a+1]);
+                eqParts[a] = ans.toString();
+                eqParts.splice(a+1,1);
+                eqParts.splice(a-1,1);
+                a = len;
+              }
+            }
+          }
+          
+          if(eqParts.length == len){
+            return recursiveCalc(eqParts.join(" "),"*");
+          }else{
+            return recursiveCalc(eqParts.join(" "),type);
+          }
+        }
+        
+        //Recursively evaluate an expression with brackets
+        function evalBrackets(str){
+          //Just return a normal calculation if there are no more brackets to compute
+          if(str.length == str.replace("(","").length){
+            return recursiveCalc(str,"+");
+          }
+          
+          var opening = undefined;
+          var closing = undefined;
+          
+          var level = 0;
+          
+          for(var a = 0;a < str.length;a ++){
+            if(str[a] == "("){
+              if(opening== undefined){
+                opening = a;
+              }
+              level ++;
+            }else if(str[a] == ")"){
+              if(level == 1){
+                closing = a;
+                a = str.length;
+              }
+              level --;
+            }
+          }
+          
+          //Split the string into pieces, according to the positions of the brackets
+          var strParts = [str.substring(0,opening),str.substring(opening+1,closing),str.substring(closing+1)];
+          
+          //Evaluate the found set of brackets, and evaluate the resulting expression
+          return evalBrackets(strParts[0]+evalBrackets(strParts[1])+strParts[2]);
+        }
+        
+        var result = 0;
+        
+        for(var l = 0;l < lines.length;l ++){
+          result += parseInt(evalBrackets(lines[l]));
+        }
+        
+        document.getElementById("output2").innerHTML = result;
+        
+        console.log(performance.now() - t0,"ms");
+      }
+    </script>
+  </body>
+</html>
