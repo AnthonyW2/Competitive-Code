@@ -23,6 +23,7 @@ fn main() {
     // Put all the solutions into an array
     let solutions = [
         solutions::day1::day1::solution,
+        solutions::day2::day2::solution,
     ];
     
     let args: Vec<String> = env::args().collect();
