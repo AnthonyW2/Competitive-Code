@@ -124,7 +124,7 @@ pub mod day6 {
         let mut loop_count = 0;
         for y in 0..map.len() {
             for x in 0..map[0].len() {
-                if (x as isize, y as isize) != start_pos {
+                if (x as isize, y as isize) != start_pos && map[y][x] == 'X' {
                     if test_obstacle(&map, start_pos, start_vel, (x as isize, y as isize)) {
                         loop_count += 1;
                     }
