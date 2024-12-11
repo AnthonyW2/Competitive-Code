@@ -1,32 +1,49 @@
 pub mod day11 {
     
+    use std::collections::HashMap;
+    
     pub fn solution(lines: Vec<String>) {
         
         // ==== Part 1 ==== //
         
         let starting_rocks = lines[0].split_whitespace().map(|n| n.parse::<u64>().unwrap()).collect::<Vec<_>>();
         
-        fn iterate_rocks (rocks: &Vec<u64>) -> Vec<u64> {
+        // Key: (rock, iterations)
+        // Value: count
+        let mut cache: HashMap<(u64, u32), usize> = HashMap::new();
+        
+        fn iterate_rock (rock: u64, iterations: u32, cache: &mut HashMap<(u64, u32), usize>) -> usize {
             
-            let mut new_rocks = Vec::new();
-            
-            for rock in rocks {
-                if *rock == 0 {
-                    new_rocks.push(1);
-                    continue;
-                }
-                let str = rock.to_string();
-                if str.len() % 2 == 0 {
-                    let left = &str[..str.len() / 2];
-                    let right = &str[str.len() / 2..];
-                    new_rocks.push(left.parse::<u64>().unwrap());
-                    new_rocks.push(right.parse::<u64>().unwrap());
-                } else {
-                    new_rocks.push(rock * 2024);
-                }
+            // Base case
+            if iterations == 0 {
+                return 1;
             }
             
-            return new_rocks;
+            // Return cached result
+            if cache.contains_key(&(rock, iterations)) {
+                return *cache.get(&(rock, iterations)).unwrap();
+            }
+            
+            if rock == 0 {
+                let result = iterate_rock(1, iterations-1, cache);
+                cache.insert((rock, iterations), result);
+                return result;
+            }
+            
+            let str = rock.to_string();
+            if str.len() % 2 == 0 {
+                let left = &str[..str.len() / 2];
+                let right = &str[str.len() / 2..];
+                let mut count = 0;
+                count += iterate_rock(left.parse::<u64>().unwrap(), iterations-1, cache);
+                count += iterate_rock(right.parse::<u64>().unwrap(), iterations-1, cache);
+                cache.insert((rock, iterations), count);
+                return count;
+            }
+            
+            let result = iterate_rock(rock * 2024, iterations-1, cache);
+            cache.insert((rock, iterations), result);
+            return result;
             
         }
         
@@ -34,19 +51,9 @@ pub mod day11 {
         
         let mut count1 = 0;
         
-        for rock in rocks {
+        for rock in rocks.clone() {
             
-            let mut group = vec![rock];
-            
-            for i in 0..25 {
-                
-                group = iterate_rocks(&group);
-                
-            }
-            
-            //println!("{:?}", group);
-            
-            count1 += group.len();
+            count1 += iterate_rock(rock, 25, &mut cache);
             
         }
         
@@ -55,7 +62,15 @@ pub mod day11 {
         
         // ==== Part 2 ==== //
         
-        println!("Part 2: {}", "_");
+        let mut count2 = 0;
+        
+        for rock in rocks {
+            
+            count2 += iterate_rock(rock, 75, &mut cache);
+            
+        }
+        
+        println!("Part 2: {}", count2);
         
     }
     
