@@ -47,7 +47,7 @@ pub mod day11 {
             
         }
         
-        let mut rocks = starting_rocks.clone();
+        let rocks = starting_rocks.clone();
         
         let mut count1 = 0;
         
